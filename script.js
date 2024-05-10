@@ -23,59 +23,7 @@ void main() {
 }
 `
 
-let program; // globalne dlaafunkcji changeColor
-
-function changeColor() {
-    console.log('change color');
-
-    const canvas = document.getElementById('main-canvas');
-    const gl = canvas.getContext('webgl');
-    gl.useProgram(program);
-    gl.clearColor(0.2, 0.7, 0.5,1.0);
-    gl.clear(gl.COLOR_BUFFER_BIT); 
-    let hexagonVerts = [
-        -0.5, 0.0,      Math.random(), Math.random(), Math.random(),
-        -0.25, 0.5,     Math.random(), Math.random(),Math.random(),
-        0.25, 0.5,      Math.random(), Math.random(),Math.random(),
-        0.5, 0.0,       Math.random(), Math.random(),Math.random(),
-        0.25, -0.5,     Math.random(), Math.random(),Math.random(),
-        -0.25, -0.5,    Math.random(), Math.random(),Math.random(),
-    ]
-
-    const hexagonVertBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, hexagonVertBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(hexagonVerts), gl.STATIC_DRAW);
-
-    const posAttrLoc = gl.getAttribLocation(program, 'vertPosition');
-    gl.vertexAttribPointer(
-        posAttrLoc,
-        2,
-        gl.FLOAT,
-        gl.FALSE,
-        5 * Float32Array.BYTES_PER_ELEMENT,
-        0
-    );
-
-    gl.enableVertexAttribArray(posAttrLoc);
-
-    const colorAttrLoc = gl.getAttribLocation(program, 'vertColor');
-    gl.vertexAttribPointer(
-        colorAttrLoc,
-        3,
-        gl.FLOAT,
-        gl.FALSE,
-        5 * Float32Array.BYTES_PER_ELEMENT,
-        2 * Float32Array.BYTES_PER_ELEMENT
-    );
-
-    gl.enableVertexAttribArray(colorAttrLoc);
-
-    // render the hexagon with the new color
-    gl.drawArrays(gl.TRIANGLE_FAN, 0, 6);
-}
-
-
-const Hexagon = function () {
+const Square = function () {
     const canvas = document.getElementById('main-canvas');
     const gl = canvas.getContext('webgl');
     let canvasColor = [0.2, 0.7, 0.5];
@@ -94,7 +42,7 @@ const Hexagon = function () {
     gl.compileShader(vertexShader);
     gl.compileShader(fragmentShader);
 
-    program = gl.createProgram();
+    const program = gl.createProgram();
 
     gl.attachShader(program, vertexShader);
     gl.attachShader(program, fragmentShader);
@@ -106,19 +54,19 @@ const Hexagon = function () {
 
     gl.validateProgram(program);
 
-    let hexagonVerts = [
+    let squareVerts = [
     //  X,    Y
-        -0.5, 0.0,      0.0, 0.0, 1.0,
-        -0.25, 0.5,     1.0, 0.0, 1.0,
-        0.25, 0.5,      1.0, 1.0, 0.0,
-        0.5, 0.0,       0.0, 1.0, 1.0,
-        0.25, -0.5,     1.0, 0.0, 0.5,
-        -0.25, -0.5,    0.5, 0.5, 0.5
+        -0.5, -0.5,       0.0, 0.0, 0.0,// prawy dolny trojkat
+        0.5, -0.5,     1.0, 0.0, 0.0,
+        0.5, 0.5,      1.0, 1.0, 1.0,
+        -0.5, -0.5,      0.0, 0.0, 0.0,//lewy-gorny trojkat
+        0.5, 0.5,       1.0, 1.0, 1.0,
+        -0.5, 0.5,      0.0, 1.0, 0.5
     ]
 
-    const hexagonVertBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, hexagonVertBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(hexagonVerts), gl.STATIC_DRAW);
+    const squareVertBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, squareVertBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(squareVerts), gl.STATIC_DRAW);
 
     const posAttrLoc = gl.getAttribLocation(program, 'vertPosition');
     gl.vertexAttribPointer(
@@ -147,7 +95,7 @@ const Hexagon = function () {
     // render time
 
     gl.useProgram(program);
-    gl.drawArrays(gl.TRIANGLE_FAN, 0, 6);
+    gl.drawArrays(gl.TRIANGLES, 0, 6);
 
 }
 
@@ -165,4 +113,4 @@ function checkLink(gl, program) {
     if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
         console.error('ERROR linking program!', gl.getProgramInfoLog(program));
     }
-}   
+}
