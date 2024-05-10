@@ -1,2 +1,2 @@
 # Grafika-komputerowa
-Rozwiązania zadań
+Rozwiązania zadań znajduje sie w poszczególnych folderach
